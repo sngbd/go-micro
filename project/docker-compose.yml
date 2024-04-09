@@ -62,6 +62,17 @@ services:
       FROM_NAME: "John Smith"
       FROM_ADDRESS: "john.smith@example.com"
 
+  frontend-service:
+    build:
+      context: ./../front-end
+      dockerfile: ./../front-end/front-end.dockerfile
+    restart: always
+    ports:
+      - "8081:80"
+    deploy:
+      mode: replicated
+      replicas: 1 
+
   postgres:
     image: 'postgres:14.0'
     ports:

@@ -1,10 +1,26 @@
 version: '3'
 
 services:
-  broker-service:
-    image: sngbd/broker-service:1.0.0
+  caddy:
+    image: sngbd/micro-caddy:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
     ports:
-      - "8080:80"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+  front-end:
+    image: sngbd/front-end:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  broker-service:
+    image: sngbd/broker-service:1.0.1
     deploy:
       mode: replicated
       replicas: 1
@@ -73,7 +89,6 @@ services:
     image: 'postgres:14.0'
     ports:
       - "5433:5432"
-    restart: always
     deploy:
       mode: replicated
       replicas: 1
@@ -83,3 +98,9 @@ services:
       POSTGRES_DB: users
     volumes:
       - ./db-data/postgres/:/var/lib/postgresql/data/
+
+
+volumes:
+  caddy_data:
+    external: true
+  caddy_config:
